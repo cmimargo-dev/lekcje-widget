@@ -1,0 +1,244 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Plan lekcji – SP45</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;700&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --bg:        #0f0505;
+    --surface:   #1e0c0c;
+    --surface2:  #2d1414;
+    --border:    rgba(255,255,255,0.08);
+    --text:      #f5eaea;
+    --muted:     #a07070;
+    --accent:    #ff6b6b;
+    --gold:      #ffd166;
+    --glass:     rgba(42, 16, 16, 0.6);
+  }
+
+  body {
+    width: 100%; height: 100vh;
+    font-family: 'DM Sans', sans-serif;
+    background: radial-gradient(circle at center, #2a1010 0%, #0f0505 100%);
+    color: var(--text);
+    display: flex; align-items: center; justify-content: center;
+    overflow: hidden;
+  }
+
+  .glass-container {
+    background: var(--glass);
+    backdrop-filter: blur(30px);
+    border: 1px solid var(--border);
+    border-radius: 50px;
+    width: 90%; max-width: 1000px;
+    padding: 60px;
+    box-shadow: 0 60px 150px rgba(0,0,0,0.7);
+  }
+
+  .main-grid {
+    display: grid;
+    grid-template-columns: 1.4fr 1fr;
+    gap: 30px;
+    margin-bottom: 40px;
+  }
+
+  .card {
+    background: var(--surface2);
+    border-radius: 35px;
+    padding: 45px;
+    border: 1px solid var(--border);
+    display: flex; flex-direction: column; justify-content: center;
+  }
+
+  .card-label {
+    font-size: 14px; text-transform: uppercase; letter-spacing: 0.15em;
+    color: var(--muted); margin-bottom: 15px; font-weight: 600;
+  }
+
+  .card-val {
+    font-family: 'DM Mono', monospace;
+    font-size: 110px; font-weight: 500; line-height: 0.85;
+    margin-bottom: 25px;
+  }
+
+  .card-footer {
+    display: flex; align-items: center; gap: 15px;
+    font-size: 18px; color: var(--text); font-weight: 500;
+  }
+
+  /* PROGRESS */
+  .prog-section {
+    background: rgba(0,0,0,0.3);
+    border-radius: 30px;
+    padding: 30px 45px;
+    border: 1px solid var(--border);
+  }
+
+  .prog-info {
+    display: flex; justify-content: space-between; align-items: center;
+    margin-bottom: 20px;
+  }
+
+  .status-pill {
+    display: flex; align-items: center; gap: 15px;
+    background: var(--surface2);
+    padding: 10px 25px; border-radius: 999px;
+    font-size: 18px; font-weight: 600;
+  }
+
+  .sdot { width: 14px; height: 14px; border-radius: 50%; }
+  .pulse { animation: pulse 1.5s infinite; }
+  @keyframes pulse { 0% { opacity: 1; transform: scale(1); } 50% { opacity: 0.4; transform: scale(1.4); } 100% { opacity: 1; transform: scale(1); } }
+
+  .prog-bar {
+    height: 22px; background: #000;
+    border-radius: 999px; overflow: hidden;
+  }
+  .prog-fill {
+    height: 100%; width: 0%; 
+    background: linear-gradient(90deg, var(--accent), var(--gold));
+    transition: width 1s ease-in-out;
+  }
+
+  .bottom-info {
+    margin-top: 30px;
+    display: flex; justify-content: center;
+    font-size: 14px; color: var(--muted);
+    font-weight: 500; text-transform: uppercase; letter-spacing: 0.1em;
+  }
+
+  .clr-red { color: var(--accent); }
+  .clr-gold { color: var(--gold); }
+  .bg-red { background: var(--accent); }
+  .bg-gold { background: var(--gold); }
+</style>
+</head>
+<body>
+
+<div class="glass-container">
+  <div class="main-grid">
+    <!-- KARTA GŁÓWNA -->
+    <div class="card" style="border-top: 6px solid var(--accent);">
+      <div class="card-label" id="lbl-a">Pozostało czasu</div>
+      <div class="card-val clr-red" id="val-a">--:--</div>
+      <div class="card-footer">
+        <span id="emoji-a" style="font-size: 28px;">📚</span>
+        <span id="desc-a">Inicjalizacja...</span>
+      </div>
+    </div>
+
+    <!-- KARTA BOCZNA -->
+    <div class="card" style="border-top: 6px solid var(--gold);">
+      <div class="card-label" id="lbl-b">Następne</div>
+      <div class="card-val clr-gold" id="val-b" style="font-size: 75px;">--:--</div>
+      <div class="card-footer">
+        <span id="emoji-b" style="font-size: 28px;">☕</span>
+        <span id="desc-b">Czekaj...</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- SEKCJA POSTĘPU -->
+  <div class="prog-section">
+    <div class="prog-info">
+      <div class="status-pill">
+        <div class="sdot bg-red pulse" id="sdot"></div>
+        <span id="status-text">Ładowanie...</span>
+      </div>
+      <div style="font-family: 'DM Mono'; font-weight: 700; font-size: 22px; color: var(--gold)" id="prog-pct">0%</div>
+    </div>
+    <div class="prog-bar">
+      <div class="prog-fill" id="prog-fill"></div>
+    </div>
+  </div>
+
+  <div class="bottom-info">
+    <span>System Informacji SP45 • Rok szkolny 2025/2026</span>
+  </div>
+</div>
+
+<script>
+// Harmonogram zgodny z pierwowzorem[cite: 1]
+const SCHEDULE = [
+  { type:'lesson', name:'1. lekcja',      start:'08:00', end:'08:50' },
+  { type:'break',  name:'Przerwa',         start:'08:50', end:'09:00' },
+  { type:'lesson', name:'2. lekcja',      start:'09:00', end:'09:45' },
+  { type:'break',  name:'Przerwa',         start:'09:45', end:'09:55' },
+  { type:'lesson', name:'3. lekcja',      start:'09:55', end:'10:40' },
+  { type:'break',  name:'Przerwa (duża)', start:'10:40', end:'10:55' },
+  { type:'lesson', name:'4. lekcja',      start:'10:55', end:'11:40' },
+  { type:'break',  name:'Przerwa',         start:'11:40', end:'11:50' },
+  { type:'lesson', name:'5. lekcja',      start:'11:50', end:'12:35' },
+  { type:'break',  name:'Przerwa',         start:'12:35', end:'12:45' },
+  { type:'lesson', name:'6. lekcja',      start:'12:45', end:'13:30' },
+  { type:'break',  name:'Przerwa (duża)', start:'13:30', end:'13:50' },
+  { type:'lesson', name:'7. lekcja',      start:'13:50', end:'14:35' },
+  { type:'break',  name:'Przerwa',         start:'14:35', end:'14:45' },
+  { type:'lesson', name:'8. lekcja',      start:'14:45', end:'15:30' },
+  { type:'break',  name:'Przerwa',         start:'15:30', end:'15:40' },
+];
+
+function toSec(t) { const [h,m]=t.split(':').map(Number); return h*3600+m*60; }
+function fmt(s) {
+  if (s<=0) return '0:00';
+  const m = Math.floor(s/60);
+  const sec = s%60;
+  return m + ':' + String(sec).padStart(2,'0');
+}
+
+function updateUI() {
+  const now = new Date();
+  const ns = now.getHours()*3600 + now.getMinutes()*60 + now.getSeconds();
+
+  let idx = SCHEDULE.findIndex(s => ns >= toSec(s.start) && ns < toSec(s.end));
+
+  if (idx === -1) {
+    const nextIdx = SCHEDULE.findIndex(s => toSec(s.start) > ns);
+    if (nextIdx === -1) {
+      document.getElementById('val-a').textContent = "KONIEC";
+      document.getElementById('desc-a').textContent = "Lekcje zakończone";
+      document.getElementById('val-b').textContent = "--:--";
+      document.getElementById('status-text').textContent = "Po zajęciach";
+      document.getElementById('prog-fill').style.width = "100%";
+    } else {
+      const wait = toSec(SCHEDULE[nextIdx].start) - ns;
+      document.getElementById('val-a').textContent = fmt(wait);
+      document.getElementById('desc-a').textContent = "Pierwsza lekcja o " + SCHEDULE[nextIdx].start;
+      document.getElementById('status-text').textContent = "Przed lekcjami";
+    }
+    return;
+  }
+
+  const current = SCHEDULE[idx];
+  const remain = toSec(current.end) - ns;
+  const total = toSec(current.end) - toSec(current.start);
+  const pct = Math.floor(((total - remain) / total) * 100);
+
+  document.getElementById('status-text').textContent = current.name;
+  document.getElementById('val-a').textContent = fmt(remain);
+  document.getElementById('desc-a').textContent = `${current.name} (${current.start} - ${current.end})`;
+  document.getElementById('prog-fill').style.width = pct + "%";
+  document.getElementById('prog-pct').textContent = pct + "%";
+
+  const next = SCHEDULE[idx + 1];
+  if (next) {
+    const toNext = toSec(next.start) - ns;
+    document.getElementById('lbl-b').textContent = "Następnie: " + next.name;
+    document.getElementById('val-b').textContent = fmt(toNext);
+    document.getElementById('desc-b').textContent = "Początek o " + next.start;
+  }
+
+  const isLesson = current.type === 'lesson';
+  document.getElementById('sdot').className = `sdot pulse ${isLesson ? 'bg-red' : 'bg-gold'}`;
+  document.getElementById('prog-fill').style.background = isLesson ? 'var(--accent)' : 'var(--gold)';
+}
+
+setInterval(updateUI, 1000);
+updateUI();
+</script>
+</body>
+</html>
