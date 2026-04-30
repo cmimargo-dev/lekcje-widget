@@ -1,0 +1,436 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Plan lekcji – SP45</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --bg: #f5f4f0;
+    --surface: #ffffff;
+    --border: rgba(0,0,0,0.08);
+    --text: #1a1a1a;
+    --muted: #6b6b6b;
+    --blue: #2563eb;
+    --blue-light: #eff6ff;
+    --green: #16a34a;
+    --green-light: #f0fdf4;
+    --amber: #d97706;
+    --amber-light: #fffbeb;
+    --radius: 14px;
+    --radius-sm: 8px;
+  }
+
+  body {
+    font-family: 'DM Sans', sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    min-height: 100vh;
+    display: flex;
+    align-items: flex-start;
+    justify-content: center;
+    padding: 16px;
+  }
+
+  .widget {
+    width: 100%;
+    max-width: 420px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  /* Header */
+  .header {
+    background: var(--surface);
+    border: 0.5px solid var(--border);
+    border-radius: var(--radius);
+    padding: 18px 20px;
+  }
+
+  .school-name {
+    font-size: 11px;
+    font-weight: 500;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin-bottom: 10px;
+  }
+
+  .now-row {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 12px;
+  }
+
+  .now-main {
+    flex: 1;
+  }
+
+  .now-status {
+    font-size: 20px;
+    font-weight: 600;
+    color: var(--text);
+    line-height: 1.2;
+    margin-bottom: 3px;
+  }
+
+  .now-time-range {
+    font-size: 13px;
+    color: var(--muted);
+  }
+
+  .clock {
+    font-family: 'DM Mono', monospace;
+    font-size: 20px;
+    font-weight: 500;
+    color: var(--text);
+    letter-spacing: -0.02em;
+    white-space: nowrap;
+  }
+
+  /* Progress bar */
+  .progress-wrap {
+    margin-top: 14px;
+  }
+
+  .progress-label {
+    display: flex;
+    justify-content: space-between;
+    font-size: 11px;
+    color: var(--muted);
+    margin-bottom: 5px;
+  }
+
+  .progress-track {
+    height: 5px;
+    background: #e5e5e5;
+    border-radius: 999px;
+    overflow: hidden;
+  }
+
+  .progress-fill {
+    height: 100%;
+    border-radius: 999px;
+    transition: width 1s linear, background 0.3s;
+  }
+
+  /* Countdown cards */
+  .counters {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+  }
+
+  .counter-card {
+    background: var(--surface);
+    border: 0.5px solid var(--border);
+    border-radius: var(--radius);
+    padding: 16px 18px;
+  }
+
+  .counter-label {
+    font-size: 11px;
+    font-weight: 500;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin-bottom: 6px;
+  }
+
+  .counter-val {
+    font-family: 'DM Mono', monospace;
+    font-size: 28px;
+    font-weight: 500;
+    line-height: 1;
+    letter-spacing: -0.02em;
+  }
+
+  .counter-val.blue  { color: var(--blue); }
+  .counter-val.green { color: var(--green); }
+  .counter-val.amber { color: var(--amber); }
+  .counter-val.muted { color: var(--muted); }
+
+  .counter-next {
+    font-size: 11px;
+    color: var(--muted);
+    margin-top: 4px;
+  }
+
+  /* Schedule list */
+  .schedule {
+    background: var(--surface);
+    border: 0.5px solid var(--border);
+    border-radius: var(--radius);
+    overflow: hidden;
+  }
+
+  .schedule-header {
+    padding: 12px 18px;
+    font-size: 11px;
+    font-weight: 500;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--muted);
+    border-bottom: 0.5px solid var(--border);
+  }
+
+  .sch-row {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 9px 18px;
+    border-bottom: 0.5px solid var(--border);
+    transition: background 0.2s;
+  }
+
+  .sch-row:last-child { border-bottom: none; }
+
+  .sch-row.active {
+    background: var(--amber-light);
+  }
+
+  .sch-row.past {
+    opacity: 0.45;
+  }
+
+  .dot {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    flex-shrink: 0;
+  }
+
+  .dot-lesson { background: var(--blue); }
+  .dot-break  { background: var(--green); }
+  .dot-now    { background: var(--amber); animation: pulse 1.2s ease-in-out infinite; }
+
+  @keyframes pulse {
+    0%,100% { opacity: 1; transform: scale(1); }
+    50% { opacity: 0.5; transform: scale(1.3); }
+  }
+
+  .sch-time {
+    font-family: 'DM Mono', monospace;
+    font-size: 11px;
+    color: var(--muted);
+    min-width: 96px;
+  }
+
+  .sch-name {
+    font-size: 13px;
+    color: var(--text);
+    flex: 1;
+  }
+
+  .badge {
+    font-size: 10px;
+    font-weight: 500;
+    padding: 2px 8px;
+    border-radius: 999px;
+  }
+
+  .badge-lesson { background: var(--blue-light); color: #1d4ed8; }
+  .badge-break  { background: var(--green-light); color: #15803d; }
+  .badge-now    { background: var(--amber-light); color: #b45309; }
+
+  .footer {
+    text-align: center;
+    font-size: 11px;
+    color: var(--muted);
+    padding: 4px 0 8px;
+  }
+</style>
+</head>
+<body>
+<div class="widget">
+
+  <div class="header">
+    <div class="school-name">SP 45 · Plan lekcji</div>
+    <div class="now-row">
+      <div class="now-main">
+        <div class="now-status" id="now-status">Ładowanie…</div>
+        <div class="now-time-range" id="now-sub"></div>
+      </div>
+      <div class="clock" id="clock">--:--:--</div>
+    </div>
+    <div class="progress-wrap" id="progress-wrap" style="display:none">
+      <div class="progress-label">
+        <span id="prog-start"></span>
+        <span id="prog-pct"></span>
+        <span id="prog-end"></span>
+      </div>
+      <div class="progress-track">
+        <div class="progress-fill" id="prog-fill" style="width:0%;background:var(--blue)"></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="counters">
+    <div class="counter-card">
+      <div class="counter-label" id="lbl-a">—</div>
+      <div class="counter-val muted" id="val-a">—</div>
+      <div class="counter-next" id="sub-a"></div>
+    </div>
+    <div class="counter-card">
+      <div class="counter-label" id="lbl-b">—</div>
+      <div class="counter-val muted" id="val-b">—</div>
+      <div class="counter-next" id="sub-b"></div>
+    </div>
+  </div>
+
+  <div class="schedule">
+    <div class="schedule-header">Dzisiaj</div>
+    <div id="schedule-list"></div>
+  </div>
+
+  <div class="footer">digitaltv.sp45.pl</div>
+</div>
+
+<script>
+const SCHEDULE = [
+  { type:'lesson', name:'1. lekcja',       start:'08:00', end:'08:50' },
+  { type:'break',  name:'Przerwa',          start:'08:50', end:'09:00' },
+  { type:'lesson', name:'2. lekcja',       start:'09:00', end:'09:45' },
+  { type:'break',  name:'Przerwa',          start:'09:45', end:'09:55' },
+  { type:'lesson', name:'3. lekcja',       start:'09:55', end:'10:40' },
+  { type:'break',  name:'Przerwa (duża)',   start:'10:40', end:'10:55' },
+  { type:'lesson', name:'4. lekcja',       start:'10:55', end:'11:40' },
+  { type:'break',  name:'Przerwa',          start:'11:40', end:'11:50' },
+  { type:'lesson', name:'5. lekcja',       start:'11:50', end:'12:35' },
+  { type:'break',  name:'Przerwa',          start:'12:35', end:'12:45' },
+  { type:'lesson', name:'6. lekcja',       start:'12:45', end:'13:30' },
+  { type:'break',  name:'Przerwa (duża)',   start:'13:30', end:'13:50' },
+  { type:'lesson', name:'7. lekcja',       start:'13:50', end:'14:35' },
+  { type:'break',  name:'Przerwa',          start:'14:35', end:'14:45' },
+  { type:'lesson', name:'8. lekcja',       start:'14:45', end:'15:30' },
+  { type:'break',  name:'Przerwa',          start:'15:30', end:'15:40' },
+];
+
+function toSec(t) { const [h,m]=t.split(':').map(Number); return h*3600+m*60; }
+
+function fmt(s) {
+  if (s <= 0) return '0:00';
+  const m = Math.floor(s / 60), sc = s % 60;
+  return m + ':' + String(sc).padStart(2,'0');
+}
+
+function buildSchedule(idx) {
+  const el = document.getElementById('schedule-list');
+  el.innerHTML = '';
+  const nowSec = idx >= 0 ? (toSec(SCHEDULE[idx].start) + 1) : 0;
+  SCHEDULE.forEach((slot, i) => {
+    const row = document.createElement('div');
+    const isPast = toSec(slot.end) < (new Date().getHours()*3600 + new Date().getMinutes()*60 + new Date().getSeconds()) && i !== idx;
+    row.className = 'sch-row' + (i===idx?' active':'') + (isPast?' past':'');
+
+    const dot = document.createElement('div');
+    dot.className = 'dot ' + (i===idx?'dot-now':slot.type==='lesson'?'dot-lesson':'dot-break');
+
+    const time = document.createElement('span');
+    time.className = 'sch-time';
+    time.textContent = slot.start + ' – ' + slot.end;
+
+    const name = document.createElement('span');
+    name.className = 'sch-name';
+    name.textContent = slot.name;
+
+    const badge = document.createElement('span');
+    badge.className = 'badge ' + (i===idx?'badge-now':slot.type==='lesson'?'badge-lesson':'badge-break');
+    badge.textContent = i===idx?'teraz':slot.type==='lesson'?'lekcja':'przerwa';
+
+    row.appendChild(dot);
+    row.appendChild(time);
+    row.appendChild(name);
+    row.appendChild(badge);
+    el.appendChild(row);
+  });
+}
+
+function setCounter(id, lblId, subId, label, val, cls, sub) {
+  document.getElementById(lblId).textContent = label;
+  const el = document.getElementById(id);
+  el.textContent = val;
+  el.className = 'counter-val ' + cls;
+  document.getElementById(subId).textContent = sub || '';
+}
+
+function tick() {
+  const now = new Date();
+  const nowSec = now.getHours()*3600 + now.getMinutes()*60 + now.getSeconds();
+
+  document.getElementById('clock').textContent =
+    String(now.getHours()).padStart(2,'0') + ':' +
+    String(now.getMinutes()).padStart(2,'0') + ':' +
+    String(now.getSeconds()).padStart(2,'0');
+
+  let idx = -1;
+  for (let i = 0; i < SCHEDULE.length; i++) {
+    if (nowSec >= toSec(SCHEDULE[i].start) && nowSec < toSec(SCHEDULE[i].end)) { idx = i; break; }
+  }
+
+  if (idx === -1) {
+    const nextIdx = SCHEDULE.findIndex(s => toSec(s.start) > nowSec);
+    document.getElementById('progress-wrap').style.display = 'none';
+    if (nextIdx === -1) {
+      document.getElementById('now-status').textContent = 'Koniec zajęć';
+      document.getElementById('now-sub').textContent = 'Do zobaczenia jutro!';
+      setCounter('val-a','lbl-a','sub-a','—','—','muted','');
+      setCounter('val-b','lbl-b','sub-b','—','—','muted','');
+    } else {
+      document.getElementById('now-status').textContent = 'Przed lekcjami';
+      document.getElementById('now-sub').textContent = 'Pierwsza lekcja o ' + SCHEDULE[0].start;
+      const secTo = toSec(SCHEDULE[nextIdx].start) - nowSec;
+      setCounter('val-a','lbl-a','sub-a','Do pierwszej lekcji', fmt(secTo), 'amber', SCHEDULE[0].start + ' – ' + SCHEDULE[0].end);
+      setCounter('val-b','lbl-b','sub-b','—','—','muted','');
+    }
+    buildSchedule(-1);
+    return;
+  }
+
+  const slot = SCHEDULE[idx];
+  const startS = toSec(slot.start), endS = toSec(slot.end);
+  const remain = endS - nowSec;
+  const pct = Math.round(((nowSec - startS) / (endS - startS)) * 100);
+
+  document.getElementById('now-status').textContent = slot.name;
+  document.getElementById('now-sub').textContent = slot.start + ' – ' + slot.end;
+  document.getElementById('progress-wrap').style.display = 'block';
+  document.getElementById('prog-start').textContent = slot.start;
+  document.getElementById('prog-end').textContent = slot.end;
+  document.getElementById('prog-pct').textContent = pct + '%';
+  const fill = document.getElementById('prog-fill');
+  fill.style.width = pct + '%';
+
+  if (slot.type === 'lesson') {
+    fill.style.background = 'var(--blue)';
+    setCounter('val-a','lbl-a','sub-a','Do końca lekcji', fmt(remain), 'blue', slot.end);
+    const nb = SCHEDULE.slice(idx+1).find(s=>s.type==='break');
+    if (nb) {
+      setCounter('val-b','lbl-b','sub-b','Do przerwy', fmt(toSec(nb.start)-nowSec), 'amber', nb.start + ' – ' + nb.end);
+    } else {
+      setCounter('val-b','lbl-b','sub-b','—','—','muted','');
+    }
+  } else {
+    fill.style.background = 'var(--green)';
+    setCounter('val-a','lbl-a','sub-a','Przerwa kończy się', fmt(remain), 'green', slot.end);
+    const nl = SCHEDULE.slice(idx+1).find(s=>s.type==='lesson');
+    if (nl) {
+      setCounter('val-b','lbl-b','sub-b','Do lekcji', fmt(toSec(nl.start)-nowSec), 'amber', nl.start + ' – ' + nl.end);
+    } else {
+      setCounter('val-b','lbl-b','sub-b','—','—','muted','');
+    }
+  }
+
+  buildSchedule(idx);
+}
+
+tick();
+setInterval(tick, 1000);
+</script>
+</body>
+</html>
