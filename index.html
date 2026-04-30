@@ -4,228 +4,165 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Plan lekcji – SP45</title>
-<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;700&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
 <style>
   *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
   :root {
-    --bg:        #1a0a0a;
-    --surface:   #2a1010;
-    --surface2:  #3a1818;
-    --border:    rgba(255,255,255,0.07);
+    --bg:        #0f0505;
+    --surface:   #1e0c0c;
+    --surface2:  #2d1414;
+    --border:    rgba(255,255,255,0.08);
     --text:      #f5eaea;
     --muted:     #a07070;
     --accent:    #ff6b6b;
-    --accent2:   #ffb3b3;
     --gold:      #ffd166;
-    --gold-dim:  rgba(255,209,102,0.15);
-    --red-dim:   rgba(255,107,107,0.12);
-  }
-
-  html, body {
-    width: 100%; height: 100%;
-    font-family: 'DM Sans', sans-serif;
-    background: var(--bg);
-    color: var(--text);
-    overflow: hidden;
+    --glass:     rgba(42, 16, 16, 0.6);
   }
 
   body {
-    display: flex;
-    flex-direction: column;
-    height: 100vh;
-  }
-
-  /* TOP BAR */
-  .topbar {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    padding: 16px 36px;
-    background: var(--surface);
-    border-bottom: 0.5px solid var(--border);
-    flex-shrink: 0;
-  }
-
-  .school { display: flex; align-items: center; gap: 12px; }
-  .logo {
-    width: 38px; height: 38px; border-radius: 10px;
-    background: var(--accent);
+    width: 100%; height: 100vh;
+    font-family: 'DM Sans', sans-serif;
+    background: radial-gradient(circle at center, #2a1010 0%, #0f0505 100%);
+    color: var(--text);
     display: flex; align-items: center; justify-content: center;
-    font-weight: 700; font-size: 14px; color: #1a0a0a;
-  }
-  .school-name { font-size: 15px; font-weight: 600; color: var(--text); }
-  .school-sub  { font-size: 11px; color: var(--muted); }
-
-  .clock {
-    font-family: 'DM Mono', monospace;
-    font-size: 32px; font-weight: 500;
-    color: var(--accent); letter-spacing: -0.03em;
-  }
-
-  .status-pill {
-    display: flex; align-items: center; gap: 8px;
-    background: var(--red-dim);
-    border: 0.5px solid rgba(255,107,107,0.2);
-    border-radius: 999px;
-    padding: 7px 18px;
-  }
-  .sdot {
-    width: 8px; height: 8px; border-radius: 50%;
-    animation: pulse 1.4s ease-in-out infinite;
-  }
-  .sdot-red  { background: var(--accent); }
-  .sdot-gold { background: var(--gold); }
-  @keyframes pulse { 0%,100%{opacity:1;transform:scale(1)} 50%{opacity:0.4;transform:scale(1.5)} }
-  .status-text { font-size: 14px; font-weight: 500; color: var(--text); }
-
-  /* MAIN */
-  .main {
-    flex: 1;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    gap: 24px;
-    padding: 28px 36px;
-  }
-
-  /* TWO BIG CARDS */
-  .cards {
-    display: flex;
-    gap: 20px;
-    width: 100%;
-    max-width: 900px;
-  }
-
-  .big-card {
-    flex: 1;
-    background: var(--surface);
-    border: 0.5px solid var(--border);
-    border-radius: 20px;
-    padding: 34px 32px 28px;
-    position: relative;
     overflow: hidden;
   }
 
-  .big-card::before {
-    content: '';
-    position: absolute;
-    top: 0; left: 0; right: 0; height: 3px;
-    border-radius: 20px 20px 0 0;
+  .glass-container {
+    background: var(--glass);
+    backdrop-filter: blur(30px);
+    border: 1px solid var(--border);
+    border-radius: 50px;
+    width: 90%; max-width: 1000px;
+    padding: 60px;
+    box-shadow: 0 60px 150px rgba(0,0,0,0.7);
   }
-  .card-red::before  { background: var(--accent); }
-  .card-gold::before { background: var(--gold); }
 
-  .card-emoji { font-size: 26px; margin-bottom: 12px; display: block; }
+  .main-grid {
+    display: grid;
+    grid-template-columns: 1.4fr 1fr;
+    gap: 30px;
+    margin-bottom: 40px;
+  }
+
+  .card {
+    background: var(--surface2);
+    border-radius: 35px;
+    padding: 45px;
+    border: 1px solid var(--border);
+    display: flex; flex-direction: column; justify-content: center;
+  }
 
   .card-label {
-    font-size: 11px; font-weight: 500;
-    letter-spacing: 0.12em; text-transform: uppercase;
-    color: var(--muted); margin-bottom: 10px;
+    font-size: 14px; text-transform: uppercase; letter-spacing: 0.15em;
+    color: var(--muted); margin-bottom: 15px; font-weight: 600;
   }
 
   .card-val {
     font-family: 'DM Mono', monospace;
-    font-size: 80px; font-weight: 500;
-    letter-spacing: -0.04em; line-height: 1;
+    font-size: 110px; font-weight: 500; line-height: 0.85;
+    margin-bottom: 25px;
   }
-  .val-red  { color: var(--accent); }
-  .val-gold { color: var(--gold); }
-  .val-muted{ color: var(--muted); }
 
-  .card-desc {
-    font-size: 13px; color: var(--muted); margin-top: 10px;
+  .card-footer {
+    display: flex; align-items: center; gap: 15px;
+    font-size: 18px; color: var(--text); font-weight: 500;
   }
 
   /* PROGRESS */
-  .prog-wrap {
-    width: 100%; max-width: 900px;
-    background: var(--surface);
-    border: 0.5px solid var(--border);
-    border-radius: 16px;
-    padding: 18px 26px;
+  .prog-section {
+    background: rgba(0,0,0,0.3);
+    border-radius: 30px;
+    padding: 30px 45px;
+    border: 1px solid var(--border);
   }
 
-  .prog-head {
-    display: flex; justify-content: space-between;
-    margin-bottom: 10px;
-    font-size: 13px;
+  .prog-info {
+    display: flex; justify-content: space-between; align-items: center;
+    margin-bottom: 20px;
   }
-  .prog-title { font-weight: 500; color: var(--text); }
-  .prog-pct   { font-family: 'DM Mono', monospace; color: var(--muted); }
 
-  .prog-track {
-    height: 10px; background: var(--surface2);
+  .status-pill {
+    display: flex; align-items: center; gap: 15px;
+    background: var(--surface2);
+    padding: 10px 25px; border-radius: 999px;
+    font-size: 18px; font-weight: 600;
+  }
+
+  .sdot { width: 14px; height: 14px; border-radius: 50%; }
+  .pulse { animation: pulse 1.5s infinite; }
+  @keyframes pulse { 0% { opacity: 1; transform: scale(1); } 50% { opacity: 0.4; transform: scale(1.4); } 100% { opacity: 1; transform: scale(1); } }
+
+  .prog-bar {
+    height: 22px; background: #000;
     border-radius: 999px; overflow: hidden;
   }
   .prog-fill {
-    height: 100%; border-radius: 999px;
-    transition: width 1s linear, background 0.3s;
-    background: var(--accent);
+    height: 100%; width: 0%; 
+    background: linear-gradient(90deg, var(--accent), var(--gold));
+    transition: width 1s ease-in-out;
   }
 
-  /* BOTTOM */
-  .bottombar {
-    display: flex; align-items: center; justify-content: space-between;
-    padding: 10px 36px;
-    background: var(--surface);
-    border-top: 0.5px solid var(--border);
-    flex-shrink: 0;
+  .bottom-info {
+    margin-top: 30px;
+    display: flex; justify-content: center;
+    font-size: 14px; color: var(--muted);
+    font-weight: 500; text-transform: uppercase; letter-spacing: 0.1em;
   }
-  .bot { font-size: 11px; color: var(--muted); }
+
+  .clr-red { color: var(--accent); }
+  .clr-gold { color: var(--gold); }
+  .bg-red { background: var(--accent); }
+  .bg-gold { background: var(--gold); }
 </style>
 </head>
 <body>
 
-<div class="topbar">
-  <div class="school">
-    <div class="logo">SP</div>
-    <div>
-      <div class="school-name">Szkoła Podstawowa nr 45</div>
-      <div class="school-sub">digitaltv.sp45.pl</div>
+<div class="glass-container">
+  <div class="main-grid">
+    <!-- KARTA GŁÓWNA -->
+    <div class="card" style="border-top: 6px solid var(--accent);">
+      <div class="card-label" id="lbl-a">Pozostało czasu</div>
+      <div class="card-val clr-red" id="val-a">--:--</div>
+      <div class="card-footer">
+        <span id="emoji-a" style="font-size: 28px;">📚</span>
+        <span id="desc-a">Inicjalizacja...</span>
+      </div>
     </div>
-  </div>
-  <div class="clock" id="clock">--:--:--</div>
-  <div class="status-pill">
-    <div class="sdot sdot-red" id="sdot"></div>
-    <div class="status-text" id="status-text">Ładowanie…</div>
-  </div>
-</div>
 
-<div class="main">
-  <div class="cards">
-    <div class="big-card card-red" id="card-a">
-      <span class="card-emoji" id="emoji-a">📚</span>
-      <div class="card-label" id="lbl-a">Do końca lekcji</div>
-      <div class="card-val val-red" id="val-a">--:--</div>
-      <div class="card-desc" id="desc-a"></div>
-    </div>
-    <div class="big-card card-gold" id="card-b">
-      <span class="card-emoji" id="emoji-b">☕</span>
-      <div class="card-label" id="lbl-b">Do przerwy</div>
-      <div class="card-val val-gold" id="val-b">--:--</div>
-      <div class="card-desc" id="desc-b"></div>
+    <!-- KARTA BOCZNA -->
+    <div class="card" style="border-top: 6px solid var(--gold);">
+      <div class="card-label" id="lbl-b">Następne</div>
+      <div class="card-val clr-gold" id="val-b" style="font-size: 75px;">--:--</div>
+      <div class="card-footer">
+        <span id="emoji-b" style="font-size: 28px;">☕</span>
+        <span id="desc-b">Czekaj...</span>
+      </div>
     </div>
   </div>
 
-  <div class="prog-wrap">
-    <div class="prog-head">
-      <span class="prog-title" id="prog-title">Postęp</span>
-      <span class="prog-pct" id="prog-pct">0%</span>
+  <!-- SEKCJA POSTĘPU -->
+  <div class="prog-section">
+    <div class="prog-info">
+      <div class="status-pill">
+        <div class="sdot bg-red pulse" id="sdot"></div>
+        <span id="status-text">Ładowanie...</span>
+      </div>
+      <div style="font-family: 'DM Mono'; font-weight: 700; font-size: 22px; color: var(--gold)" id="prog-pct">0%</div>
     </div>
-    <div class="prog-track">
-      <div class="prog-fill" id="prog-fill" style="width:0%"></div>
+    <div class="prog-bar">
+      <div class="prog-fill" id="prog-fill"></div>
     </div>
   </div>
-</div>
 
-<div class="bottombar">
-  <span class="bot" id="bot-left">—</span>
-  <span class="bot">rok szkolny 2025/2026</span>
+  <div class="bottom-info">
+    <span>System Informacji SP45 • Rok szkolny 2025/2026</span>
+  </div>
 </div>
 
 <script>
+// Harmonogram zgodny z pierwowzorem[cite: 1]
 const SCHEDULE = [
   { type:'lesson', name:'1. lekcja',      start:'08:00', end:'08:50' },
   { type:'break',  name:'Przerwa',         start:'08:50', end:'09:00' },
@@ -248,95 +185,60 @@ const SCHEDULE = [
 function toSec(t) { const [h,m]=t.split(':').map(Number); return h*3600+m*60; }
 function fmt(s) {
   if (s<=0) return '0:00';
-  return Math.floor(s/60)+':'+String(s%60).padStart(2,'0');
+  const m = Math.floor(s/60);
+  const sec = s%60;
+  return m + ':' + String(sec).padStart(2,'0');
 }
 
-function setA(label, val, cls, emoji, desc) {
-  document.getElementById('lbl-a').textContent = label;
-  const v = document.getElementById('val-a'); v.textContent = val; v.className = 'card-val '+cls;
-  document.getElementById('emoji-a').textContent = emoji;
-  document.getElementById('desc-a').textContent = desc||'';
-  document.getElementById('card-a').className = 'big-card '+(cls==='val-gold'?'card-gold':'card-red');
-}
-function setB(label, val, cls, emoji, desc) {
-  document.getElementById('lbl-b').textContent = label;
-  const v = document.getElementById('val-b'); v.textContent = val; v.className = 'card-val '+cls;
-  document.getElementById('emoji-b').textContent = emoji;
-  document.getElementById('desc-b').textContent = desc||'';
-  document.getElementById('card-b').className = 'big-card '+(cls==='val-gold'?'card-gold':'card-red');
-}
-
-function tick() {
+function updateUI() {
   const now = new Date();
-  const ns = now.getHours()*3600+now.getMinutes()*60+now.getSeconds();
+  const ns = now.getHours()*3600 + now.getMinutes()*60 + now.getSeconds();
 
-  document.getElementById('clock').textContent =
-    String(now.getHours()).padStart(2,'0')+':'+
-    String(now.getMinutes()).padStart(2,'0')+':'+
-    String(now.getSeconds()).padStart(2,'0');
+  let idx = SCHEDULE.findIndex(s => ns >= toSec(s.start) && ns < toSec(s.end));
 
-  let idx = -1;
-  for (let i=0;i<SCHEDULE.length;i++) {
-    if (ns>=toSec(SCHEDULE[i].start)&&ns<toSec(SCHEDULE[i].end)) { idx=i; break; }
-  }
-
-  if (idx===-1) {
-    const ni = SCHEDULE.findIndex(s=>toSec(s.start)>ns);
-    document.getElementById('prog-fill').style.width='0%';
-    document.getElementById('prog-pct').textContent='0%';
-    if (ni===-1) {
-      document.getElementById('sdot').className='sdot sdot-red';
-      document.getElementById('status-text').textContent='Koniec zajęć';
-      document.getElementById('prog-title').textContent='Koniec zajęć na dziś';
-      setA('Koniec zajęć','🎉','val-muted','🎉','Do zobaczenia jutro!');
-      setB('—','—','val-muted','','');
-      document.getElementById('bot-left').textContent='Wszystkie lekcje zakończone';
+  if (idx === -1) {
+    const nextIdx = SCHEDULE.findIndex(s => toSec(s.start) > ns);
+    if (nextIdx === -1) {
+      document.getElementById('val-a').textContent = "KONIEC";
+      document.getElementById('desc-a').textContent = "Lekcje zakończone";
+      document.getElementById('val-b').textContent = "--:--";
+      document.getElementById('status-text').textContent = "Po zajęciach";
+      document.getElementById('prog-fill').style.width = "100%";
     } else {
-      const st=toSec(SCHEDULE[ni].start)-ns;
-      document.getElementById('sdot').className='sdot sdot-gold';
-      document.getElementById('status-text').textContent='Przed lekcjami';
-      document.getElementById('prog-title').textContent='Do rozpoczęcia zajęć';
-      setA('Do pierwszej lekcji',fmt(st),'val-gold','⏳','Lekcje zaczynają się o '+SCHEDULE[0].start);
-      setB('—','—','val-muted','','');
-      document.getElementById('bot-left').textContent='Zajęcia zaczynają się o '+SCHEDULE[0].start;
+      const wait = toSec(SCHEDULE[nextIdx].start) - ns;
+      document.getElementById('val-a').textContent = fmt(wait);
+      document.getElementById('desc-a').textContent = "Pierwsza lekcja o " + SCHEDULE[nextIdx].start;
+      document.getElementById('status-text').textContent = "Przed lekcjami";
     }
     return;
   }
 
-  const slot=SCHEDULE[idx];
-  const startS=toSec(slot.start), endS=toSec(slot.end);
-  const remain=endS-ns;
-  const pct=Math.round(((ns-startS)/(endS-startS))*100);
+  const current = SCHEDULE[idx];
+  const remain = toSec(current.end) - ns;
+  const total = toSec(current.end) - toSec(current.start);
+  const pct = Math.floor(((total - remain) / total) * 100);
 
-  document.getElementById('prog-pct').textContent=pct+'%';
-  document.getElementById('prog-fill').style.width=pct+'%';
+  document.getElementById('status-text').textContent = current.name;
+  document.getElementById('val-a').textContent = fmt(remain);
+  document.getElementById('desc-a').textContent = `${current.name} (${current.start} - ${current.end})`;
+  document.getElementById('prog-fill').style.width = pct + "%";
+  document.getElementById('prog-pct').textContent = pct + "%";
 
-  const lessonsLeft=SCHEDULE.slice(idx+1).filter(s=>s.type==='lesson').length;
-  document.getElementById('bot-left').textContent='Pozostałe lekcje dzisiaj: '+lessonsLeft;
-
-  if (slot.type==='lesson') {
-    document.getElementById('sdot').className='sdot sdot-red';
-    document.getElementById('status-text').textContent=slot.name;
-    document.getElementById('prog-title').textContent='Postęp lekcji';
-    document.getElementById('prog-fill').style.background='var(--accent)';
-    setA('Do końca lekcji', fmt(remain), 'val-red', '📚', slot.name+' · '+slot.start+' – '+slot.end);
-    const nb=SCHEDULE.slice(idx+1).find(s=>s.type==='break');
-    if (nb) setB('Do przerwy', fmt(toSec(nb.start)-ns), 'val-gold', '☕', nb.name+' o '+nb.start);
-    else setB('—','—','val-muted','','');
-  } else {
-    document.getElementById('sdot').className='sdot sdot-gold';
-    document.getElementById('status-text').textContent=slot.name;
-    document.getElementById('prog-title').textContent='Postęp przerwy';
-    document.getElementById('prog-fill').style.background='var(--gold)';
-    setA('Przerwa kończy się za', fmt(remain), 'val-gold', '☕', slot.name+' · do '+slot.end);
-    const nl=SCHEDULE.slice(idx+1).find(s=>s.type==='lesson');
-    if (nl) setB('Do lekcji', fmt(toSec(nl.start)-ns), 'val-red', '📚', nl.name+' o '+nl.start);
-    else setB('—','—','val-muted','','');
+  const next = SCHEDULE[idx + 1];
+  if (next) {
+    const toNext = toSec(next.start) - ns;
+    document.getElementById('lbl-b').textContent = "Następnie: " + next.name;
+    document.getElementById('val-b').textContent = fmt(toNext);
+    document.getElementById('desc-b').textContent = "Początek o " + next.start;
   }
+
+  const isLesson = current.type === 'lesson';
+  document.getElementById('sdot').className = `sdot pulse ${isLesson ? 'bg-red' : 'bg-gold'}`;
+  document.getElementById('prog-fill').style.background = isLesson ? 'var(--accent)' : 'var(--gold)';
 }
 
-tick();
-setInterval(tick,1000);
+setInterval(updateUI, 1000);
+updateUI();
 </script>
 </body>
 </html>
